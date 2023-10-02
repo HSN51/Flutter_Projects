@@ -1,0 +1,254 @@
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Flutter Demo',
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
+      ),
+      initialRoute: '/home',
+      routes: {
+        '/home': (context) => MyHomePage(),
+        '/settings': (context) => SettingsPage(),
+      },
+      debugShowCheckedModeBanner: false,
+    );
+  }
+}
+
+class MyHomePage extends StatelessWidget {
+  final String myString = 'Hello World';
+  final String email = 'example@example.com';
+  final String phone = '1234567890';
+  final String name = 'John Doe';
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Welcome to the Schedule App'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () {
+              Navigator.pushNamed(context, '/settings');
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.person),
+            onPressed: () {
+              showModalBottomSheet(
+                context: context,
+                builder: (BuildContext context) {
+                  return Container(
+                    padding: EdgeInsets.all(16),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        ListTile(
+                          leading: Icon(Icons.email),
+                          title: Text(email),
+                        ),
+                        ListTile(
+                          leading: Icon(Icons.phone),
+                          title: Text(phone),
+                        ),
+                        ListTile(
+                          leading: Icon(Icons.person),
+                          title: Text(name),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              );
+            },
+          ),
+        ],
+      ),
+      body: Center(
+        child: Column(
+          children: [
+            SizedBox(height: 20),
+            Image.asset(
+              'images/schedule_image.jpg',
+              width: 200,
+              height: 200,
+            ),
+            SizedBox(height: 20),
+            Container(
+              margin: EdgeInsets.symmetric(horizontal: 30),
+              child: Text(
+                'See your schedule for the week',
+                style: TextStyle(fontSize: 20),
+                textAlign: TextAlign.center,
+              ),
+            ),
+            SizedBox(height: 20),
+            Expanded(
+              child: ListView.separated(
+                itemBuilder: (context, index) {
+                  return ListTile(
+                    title: Text('Task ${index + 1}'),
+                    leading: Icon(Icons.calendar_today),
+                    trailing: Icon(Icons.arrow_forward_ios),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => DetailsPage(
+                            myString: 'Task ${index + 1}',
+                            email: email,
+                            phone: phone,
+                            name: name,
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                },
+                itemCount: 20,
+                separatorBuilder: (context, index) {
+                  return SizedBox(height: 5);
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class DetailsPage extends StatefulWidget {
+  final String myString;
+  final String email;
+  final String phone;
+  final String name;
+
+  DetailsPage({
+    required this.myString,
+    required this.email,
+    required this.phone,
+    required this.name,
+  });
+
+  @override
+  State<DetailsPage> createState() => _DetailsPageState();
+}
+
+class _DetailsPageState extends State<DetailsPage> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('Details Page')),
+      body: Center(
+        child: Column(
+          children: [
+            SizedBox(height: 20),
+            Text('Details Page'),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text("Go Back"),
+            ),
+            SizedBox(height: 20),
+            Text(widget.myString),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class SettingsPage extends StatefulWidget {
+  const SettingsPage({Key? key}) : super(key: key);
+
+  @override
+  State<SettingsPage> createState() => _SettingsPageState();
+}
+
+class _SettingsPageState extends State<SettingsPage> {
+  int counter = 0;
+  bool isOpen = false;
+
+  void toggleButton() {
+    setState(() {
+      isOpen = !isOpen;
+    });
+  }
+
+  void increaseCounter() {
+    setState(() {
+      counter++;
+    });
+  }
+
+  void decreaseCounter() {
+    setState(() {
+      counter--;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('Settings Page')),
+      body: Center(
+        child: Column(
+          children: [
+            SizedBox(height: 20),
+            Text('Settings Page'),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                increaseCounter();
+              },
+              child: Text("Increase Counter"),
+            ),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                decreaseCounter();
+              },
+              child: Text("Decrease Counter"),
+            ),
+            SizedBox(height: 20),
+            Text('Counter: $counter'),
+            SizedBox(height: 50),
+            IconButton(
+              onPressed: () {
+                toggleButton();
+              },
+              icon: Icon(Icons.photo_camera),
+            ),
+            SizedBox(height: 20),
+            if (isOpen)
+              Image.asset(
+                'images/myimage.jpeg',
+                width: 300,
+                height: 300,
+              ),
+          ],
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.pushNamed(context, '/home');
+        },
+        child: Icon(Icons.arrow_back),
+      ),
+    );
+  }
+}
